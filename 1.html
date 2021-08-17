@@ -1,0 +1,63 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <meta charset="utf-8"/>
+        <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+        <script src="/socket.io/socket.io.js"></script>   
+        <script>
+            window.onload = function(){
+                // 소켓을 생성
+                var socket = io.connect();
+                
+                document.getElementById('ChatSend').onclick = function(){
+                    var Room = document.getElementById('ChatRoom').value;
+                    var NickName = document.getElementById('ChatNickName').value;
+                    var Input = document.getElementById('ChatInput').value;
+                    
+                    var data = {Room, NickName, Input};
+                    
+                    socket.emit('SendChat',data)
+                }
+                
+                socket.on('ChatResult', function(data){
+                     var p = document.createElement("p");
+                     p.innerHTML = data.NickName + " : " + data.Input;
+                     document.getElementById('ChatBoard').appendChild(p);
+                     // room id 을 찾고 Hchat 객체 반환.
+                     document.getElementById('Hchat').innerHTML = data.Room;
+                });
+                //room 제거
+               socket.leave('roomlevae',function(data){
+
+                   console("제거")
+
+
+               })
+
+                
+                
+            };
+        </script>
+        <style>
+            #ChatBoard{
+                width : 500px;
+                height : 500px;
+                border : 2px solid gray;
+            }
+        </style>
+    </head>
+    <body>
+        <h2 id="Hchat">채팅방이름</h2>
+        <form id="form">
+            <input type="text"  id="ChatRoom" placeholder="채팅방명 입력"/> 
+            <input type="text" id="ChatNickName" placeholder="이름을 입력"/>
+            <input type="text" id="ChatInput" placeholder="할말을 입력"/>   
+            <input type="button" id="ChatSend" value="클릭"/>
+            <input type="button" id="roomleave" value="방떠나기"/>
+            
+        </form>    
+        <br/>
+        <div id="ChatBoard"></div>
+        
+    </body>
+</html>
